@@ -1,0 +1,34 @@
+service: gae-static
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+# file with extensions (longer cache period)
+- url: /(.*\.(css|js|woff|woff2|ico|png))
+  static_files: www/\1
+  upload: www/(.*)
+  expiration: "7d"
+  secure: always
+
+# file with other extensions (e.g. .html)
+- url: /(.*\..*)
+  static_files: www/\1
+  upload: www/(.*)
+  secure: always
+
+# assume file without extensions use default index.html
+- url: /(.*)/
+  static_files: www/\1/index.html
+  upload: www/(.*)/index.html
+  secure: always
+
+# home
+- url: /
+  static_files: www/index.html
+  upload: www/index.html
+  secure: always
+
+# access without trailing slash
+- url: /(.*)
+  script: app.app
